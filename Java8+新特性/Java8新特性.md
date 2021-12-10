@@ -135,6 +135,10 @@ public class Demo {
 
 * 类型注解
 > Java 8 扩展了注解的使用场景。现在，它几乎可以对Java中任何元素进行注解：局部变量、泛型、超类、甚至是函数的异常声明。就是扩展了 @Target 枚举类型，添加了***TYPE_PARAMETER、TYPE_USE***
+
+    ElementType.TYPE_PARAMETER 表示该注解能写在类型变量的声明语句中（如：泛型声明）
+    ElementType.TYPE_USE 表示该注解能写在使用类型的任何语句中
+    
 ```
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
