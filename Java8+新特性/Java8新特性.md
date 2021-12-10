@@ -9,13 +9,13 @@ Java 8 (又称为 jdk 1.8) 是 Java 语言开发的一个主要版本，也是LT
     便于并行  
 - - -
 ## 清单
-1.<a href="#mark-1">接口的新特性</a>  
-2.<a href="#mark-2">注解的新特性</a>  
-3.集合的底层源码实现  
-4.新日期时间的API  
-5.Optional类的使用  
-6.Lambda 表达式(Lambda Expressions)  
-7.Stream API  
+1、<a href="#mark-1">接口的新特性</a>  
+2、<a href="#mark-2">注解的新特性</a>  
+3、<a href="#mark-1">集合的底层源码实现</a>  
+4、<a href="#mark-1">新日期时间的API</a>  
+5、<a href="#mark-1">Optional类的使用</a>  
+6、<a href="#mark-1">Lambda 表达式(Lambda Expressions)</a>  
+7、<a href="#mark-1">Stream API</a>  
 - - -
 ## 详细
 ### <div id="mark-1">接口的新特性</div>
