@@ -74,11 +74,12 @@ class MyClass implements MyFunc, Named {
 ### 注解的新特性
 Java 8对注解处理提供了两点改进：可重复的注解及可用于类型的注解。此外，反射也得到了加强，在Java8中能够得到方法参数的名称。这会简化标注在方法参数上的注解。
 
-    1.可重复注解
+    1.可重复注解 （Repeating annotations）
     2.类型注解
 
 * 可重复注解
-> 使用方式注意两点：1.在需要重复的注解上声明@Repeatable，设置其成员值为包含其的注解（如：XXX.class），2.设置需要重复的注解的Target和Retention等元注解与包含其的注解相同。也就是要想定义重复注解，必须给它定义的容器类，还要使用 @Repeatable 注解修饰一下
+> 自从Java 5 引入注解以来，这个特性变得非常流行并且被广泛使用。然而，注解的一个使用限制是，在同一个位置，相同的注解不能声明两次。Java 8解除了这个规则并且引入了重复注解的概念，它允许相同的注解在同一个位置声明多次。重复注解本身在定义时需要使用@Repeatable注解修饰。实际上，这个并不算是语言的改变，而是一个编译器欺骗，底层技术保持不变。  
+使用方式注意两点：1.在需要重复的注解上声明@Repeatable，设置其成员值为包含其的注解（如：XXX.class），2.设置需要重复的注解的Target和Retention等元注解与包含其的注解相同。也就是要想定义重复注解，必须给它定义的容器类，还要使用 @Repeatable 注解修饰一下
 ```
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
@@ -131,3 +132,32 @@ public class Demo {
 
     Hello
     World
+
+* 类型注解
+> Java 8 扩展了注解的使用场景。现在，它几乎可以对Java中任何元素进行注解：局部变量、泛型、超类、甚至是函数的异常声明。就是扩展了 @Target 枚举类型，添加了***TYPE_PARAMETER、TYPE_USE***
+```
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.ArrayList;
+import java.util.Collection;
+
+public class Annotations {
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
+    public @interface NonEmpty {
+    }
+
+    public static class Holder<@NonEmpty T> extends @NonEmpty Object {
+        public void method() throws @NonEmpty Exception {
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void main(String[] args) {
+        final Holder<String> holder = new @NonEmpty Holder<String>();
+        @NonEmpty Collection<@NonEmpty String> strings = new ArrayList<>();
+    }
+}
+```
