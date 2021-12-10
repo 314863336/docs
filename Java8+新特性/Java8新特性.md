@@ -9,16 +9,16 @@ Java 8 (又称为 jdk 1.8) 是 Java 语言开发的一个主要版本，也是LT
     便于并行  
 - - -
 ## 清单
-    1.接口的新特性  
-    2.注解的新特性  
-    3.集合的底层源码实现  
-    4.新日期时间的API  
-    5.Optional类的使用  
-    6.Lambda 表达式(Lambda Expressions)  
-    7.Stream API  
+1.<a href="#mark-1">接口的新特性</a>  
+2.<a href="#mark-2">注解的新特性</a>  
+3.集合的底层源码实现  
+4.新日期时间的API  
+5.Optional类的使用  
+6.Lambda 表达式(Lambda Expressions)  
+7.Stream API  
 - - -
 ## 详细
-### 接口的新特性
+### <div id="mark-1">接口的新特性</div>
 Java 8中，你可以为接口添加静态方法和默认方法。从技术角度来说，这是完全合法的，只是它看起来违反了接口作为一个抽象定义的理念。
 
     1.静态方法
@@ -71,7 +71,7 @@ class MyClass implements MyFunc, Named {
 }
 ```
 - - -
-### 注解的新特性
+### <div id="mark-2">注解的新特性</div>
 Java 8对注解处理提供了两点改进：可重复的注解及可用于类型的注解。此外，反射也得到了加强，在Java8中能够得到方法参数的名称。这会简化标注在方法参数上的注解。
 
     1.可重复注解 （Repeating annotations）
@@ -138,7 +138,7 @@ public class Demo {
 
     ElementType.TYPE_PARAMETER 表示该注解能写在类型变量的声明语句中（如：泛型声明）
     ElementType.TYPE_USE 表示该注解能写在使用类型的任何语句中
-    
+
 ```
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
