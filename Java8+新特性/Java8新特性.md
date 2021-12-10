@@ -21,6 +21,24 @@ Java 8 (又称为 jdk 1.8) 是 Java 语言开发的一个主要版本，也是LT
 ### 接口的新特性
 * 静态方法  
 > 静态方法使用 ***static*** 关键字修饰。可以通过接口直接调用静态方法，并执行其方法体。我们经常在相互一起使用的类中使用静态方法。你可以在标准库中找到像Collection/Collections或者Path/Paths这样成对的接口和类。
+```
+public interface A {
+    public static void method() {
+	    System.out.println(“hello lambda!");
+    }
+}
+
+```
 * 默认方法
 > 默认方法使用 ***default*** 关键字修饰。可以通过实现类对象来调用。我们在已有的接口中提供新方法的同时，还保持了与旧版本代码的兼容性。
 比如：java 8 API中对Collection、List、Comparator等接口提供了丰富的默认方法。
+```
+public interface A {
+    public default void method1() {
+	    System.out.println("北京");
+    }
+    default String method2() {
+        return "上海";
+    }
+}
+```
