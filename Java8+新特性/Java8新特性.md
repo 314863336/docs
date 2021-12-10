@@ -19,6 +19,11 @@ Java 8 (又称为 jdk 1.8) 是 Java 语言开发的一个主要版本，也是LT
 - - -
 ## 详细
 ### 接口的新特性
+Java 8中，你可以为接口添加静态方法和默认方法。从技术角度来说，这是完全合法的，只是它看起来违反了接口作为一个抽象定义的理念。
+
+    1.静态方法
+    2.默认方法
+
 * 静态方法  
 > 静态方法使用 ***static*** 关键字修饰。可以通过接口直接调用静态方法，并执行其方法体。我们经常在相互一起使用的类中使用静态方法。你可以在标准库中找到像Collection/Collections或者Path/Paths这样成对的接口和类。
 ```
@@ -65,4 +70,64 @@ class MyClass implements MyFunc, Named {
     }
 }
 ```
-- - - 
+- - -
+### 注解的新特性
+Java 8对注解处理提供了两点改进：可重复的注解及可用于类型的注解。此外，反射也得到了加强，在Java8中能够得到方法参数的名称。这会简化标注在方法参数上的注解。
+
+    1.可重复注解
+    2.类型注解
+
+* 可重复注解
+> 要想定义重复注解，必须给它定义的容器类，还要使用 @Repeatable 注解修饰一下
+```
+import java.lang.annotation.Repeatable;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Method;
+
+import static java.lang.annotation.ElementType.*;
+
+/**
+ * @author: panlingfeng
+ * @createDate: 2021/12/9 11:01 上午
+ */
+public class Demo {
+    public static void main(String[] args) throws NoSuchMethodException {
+        Class<Demo> clazz = Demo.class;
+        Method method = clazz.getMethod("show");
+        // 获取方法上的注解
+        RepetitionAnnotation[] ras = method.getAnnotationsByType(RepetitionAnnotation.class);
+        for (RepetitionAnnotation repetitionAnnotation : ras) {
+            System.out.println(repetitionAnnotation.value());
+        }
+    }
+
+    @RepetitionAnnotation("Hello")
+    @RepetitionAnnotation("World")
+    public void show() {
+    }
+}
+
+
+@Repeatable(RepetitionAnnotations.class)
+@Target({TYPE, FIELD, METHOD, PARAMETER, CONSTRUCTOR, LOCAL_VARIABLE})
+@Retention(RetentionPolicy.RUNTIME)
+@interface RepetitionAnnotation {
+    String value() default "ling";
+}
+
+/**
+ * 容器类
+ */
+@Target({TYPE, FIELD, METHOD, PARAMETER, CONSTRUCTOR, LOCAL_VARIABLE})
+@Retention(RetentionPolicy.RUNTIME)
+@interface RepetitionAnnotations {
+    RepetitionAnnotation[] value();
+}
+```
+
+执行输出
+
+    Hello
+    World
