@@ -360,3 +360,28 @@ UTC + (＋0800) = 本地（北京）时间 (1)
     自定义的格式，如：ofPattern("yyyy-MM-dd hh:mm:ss E")  
 
 <img src="img/9.png" />
+
+- - -
+
+### <div id="mark-5">Optional类的使用</div>
+
+    到目前为止，臭名昭著的空指针异常是导致Java应用程序失败的最常见原因。以前，为了解决空指针异常，Google公司著名的Guava项目引入了Optional类，Guava通过使用检查空值的方式来防止代码污染，它鼓励程序员写更干净的代码。受到Google Guava的启发，Optional类已经成为Java 8类库的一部分。
+
+    Optional实际上是个容器：它可以保存类型T的值，或者仅仅保存null。Optional提供很多有用的方法，这样我们就不用显式进行空值检测。
+
+    Optional类的Javadoc描述如下：这是一个可以为null的容器对象。如果值存在则isPresent()方法会返回true，调用get()方法会返回该对象。
+
+> Optional<T> 类(java.util.Optional) 是一个容器类，代表一个值存在或不存在，原来用 null 表示一个值不存在，现在 Optional 可以更好的表达这个概念。并且可以避免空指针异常。
+
+> 常用方法：  
+
+    Optional.empty() : 创建一个空的 Optional 实例  
+    Optional.of(T t) : 创建一个 Optional 实例  
+    Optional.ofNullable(T t):若 t 不为 null,创建 Optional 实例,否则创建空实例  
+    isPresent() : 判断是否包含值  
+    T get(): 如果调用对象包含值，返回该值，否则抛异常  
+    orElse(T t) :  如果调用对象包含值，返回该值，否则返回t  
+    orElseGet(Supplier s) :如果调用对象包含值，返回该值，否则返回 s 获取的值  
+    map(Function f): 如果有值对其处理，并返回处理后的Optional，否则返回 Optional.empty()  
+    flatMap(Function mapper):与 map 类似，要求返回值必须是Optional  
+
