@@ -165,7 +165,7 @@ public class Annotations {
     }
 }
 ```
-### <div id="mark-1">集合的底层源码实现</div>
+### <div id="mark-3">集合的底层源码实现</div>
     1、你不可不知的数据结构
     2、ArrayList、LinkedList、Vector区别？
     3、ArrayList和LinkedList的底层源码实现
@@ -290,3 +290,71 @@ System.out.println(set);
 // 其中，其中Person类中重写了hashCode()和equal()方法
 
 ```
+### <div id="mark-4">新日期时间的API</div>
+    1、旧版日期操作的缺陷
+    2、Java8新版的日期操作
+    3、新版日期包概况
+    4、LocalDate、LocalTime、LocalDateTime 的API说明
+    5、Instant 时间点
+    6、格式化与解析日期或时间
+
+* 旧版日期操作的缺陷
+
+> 对日期和时间的操作一直是Java程序员最痛苦的地方之一
+
+    如果我们可以跟别人说：“我们在1502643933071见面，别晚了！”那么就再简单不过了。但是我们希望时间与昼夜和四季有关，于是事情就变复杂了。JDK 1.0中包含了一个java.util.Date类，但是它的大多数方法已经在JDK 1.1引入Calendar类之后被弃用了。而Calendar并不比Date好多少。它们面临的问题是：
+    可变性：像日期和时间这样的类应该是不可变的。
+    偏移性：Date中的年份是从1900开始的，而月份都从0开始。
+    格式化：格式化只对Date有用，Calendar则不行。
+    此外，它们也不是线程安全的；不能处理闰秒等。
+
+* Java8新版的日期操作
+
+> Java 8中引入的java.time API 已经纠正了过去的缺陷，将来很长一段时间内它都会为我们服务。
+
+> Java 8 吸收了 Joda-Time 的精华，以一个新的开始为 Java 创建优秀的 API。新的java.time中包含了所有关于**本地日期**（LocalDate）、**本地时间**（LocalTime）、**本地日期时间**（LocalDateTime）、**时区**（ZonedDateTime）和**持续时间**（Duration）的类。历史悠久的**Date**类新增了**toInstant()**方法，用于把**Date**转换成新的表示形式。这些新增的本地化时间日期API大大简化了日期时间和本地化的管理。
+
+* 新版日期包概况
+
+    java.time – 包含值对象的基础包  
+    java.time.chrono – 提供对不同的日历系统的访问  
+    java.time.format – 格式化和解析时间和日期  
+    java.time.temporal – 包括底层框架和扩展特性  
+    java.time.zone – 包含时区支持的类  
+
+说明：大多数开发者只会用到基础包和**format**包，也可能会用到**temporal**包。因此，尽管有68个新的公开类型，大多数开发者，大概将只会用到其中的三分之一。
+
+* LocalDate、LocalTime、LocalDateTime 的API说明
+
+    LocalDate、LocalTime、LocalDateTime 类是其中较重要的几个类，它们的实例是不可变的对象，分别表示使用ISO-8601日历系统的日期、时间、日期和时间。它们提供了简单的本地日期或时间，并不包含当前的时间信息，也不包含与时区相关的信息。
+
+ 注：ISO-8601日历系统是国际标准化组织制定的现代公民的日期和时间的表示法，也就是公历。
+ <img src="img/6.png" />
+
+* Instant 时间点
+> 在处理时间和日期的时候，我们通常会想到年,月,日,时,分,秒。然而，这只是时间的一个模型，是面向人类的。第二种通用模型是面向机器的，或者说是连续的。在此模型中，时间线中的一个点表示为一个很大的数，这有利于计算机处理。在UNIX中，这个数从1970年开始，以秒为的单位；同样的，在Java中，也是从1970年开始，但以毫秒为单位。
+
+> java.time包通过值类型Instant提供机器视图，不提供处理人类意义上的时间单位。Instant表示时间线上的一点，而不需要任何上下文信息，例如，时区。概念上讲，它只是简单的表示自1970年1月1日0时0分0秒（UTC）开始的秒数。因为java.time包是基于纳秒计算的，所以Instant的精度可以达到纳秒级。(1 ns = 10-9 s)   1秒 = 1000毫秒 =10^6微秒=10^9纳秒。
+
+<img src="img/7.png" />
+
+```
+整个地球分为二十四时区，每个时区都有自己的本地时间。在国际无线电通信场合，为了统一起见，使用一个统一的时间，称为通用协调时(UTC, Universal Time Coordinated)。UTC与格林尼治平均时(GMT, Greenwich Mean Time)一样，都与英国伦敦的本地时相同。这里，UTC与GMT含义完全相同。
+北京时区是东八区，领先UTC八个小时，在电子邮件信头的Date域记为+0800。如果在电子邮件的信头中有这么一行：Date: Fri, 08 Nov 2002 09:42:22 +0800 说明信件的发送地的地方时间是二○○二年十一月八号，星期五，早上九点四十二分（二十二秒），这个地方的本地时领先UTC八个小时(+0800， 就是东八区时间)。电子邮件信头的Date域使用二十四小时的时钟，而不使用AM和PM来标记上下午。以这个电子邮件的发送时间为例，如果要把这个时间转化为UTC，可以使用一下公式：UTC + 时区差 ＝ 本地时间，时区差东为正，西为负。
+在此，把东八区时区差记为 +0800，
+UTC + (＋0800) = 本地（北京）时间 (1) 
+那么，UTC = 本地时间（北京时间）- 0800 (2)
+0942 - 0800 = 0142
+即UTC是当天凌晨一点四十二分二十二秒。
+
+```
+<img src="img/8.png" />
+
+* 格式化与解析日期或时间
+
+    java.time.format.DateTimeFormatter 类：该类提供了三种格式化方法：  
+    预定义的标准格式，如：ISO_LOCAL_DATE_TIME；ISO_LOCAL_DATE  
+    本地化相关的格式，如：ofLocalizedDate(FormatStyle.FULL)  
+    自定义的格式，如：ofPattern("yyyy-MM-dd hh:mm:ss E")  
+
+<img src="img/9.png" />
