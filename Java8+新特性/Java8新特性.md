@@ -14,9 +14,8 @@ Java 8 (又称为 jdk 1.8) 是 Java 语言开发的一个主要版本，也是LT
 3、<a href="#mark-3">集合的底层源码实现</a>  
 4、<a href="#mark-4">新日期时间的API</a>  
 5、<a href="#mark-5">Optional类的使用</a>  
-6、<a href="#mark-6">Lambda 表达式(Lambda Expressions)</a>  
-7、<a href="#mark-7">函数式接口</a>  
-8、<a href="#mark-8">Stream API</a> 
+6、<a href="#mark-6">Lambda 表达式(Lambda Expressions)</a>   
+7、<a href="#mark-7">Stream API</a>  
 - - -
 ## 详细
 ### <div id="mark-1">接口的新特性</div>
@@ -168,6 +167,7 @@ public class Annotations {
 ```
 - - -
 ### <div id="mark-3">集合的底层源码实现</div>
+
     1、你不可不知的数据结构
     2、ArrayList、LinkedList、Vector区别？
     3、ArrayList和LinkedList的底层源码实现
@@ -176,6 +176,7 @@ public class Annotations {
     6、HashMap的存储结构
     7、LinkedHashMap的底层源码实现
     8、HashSet / LinkedHashSet 等底层源码有变化吗? 
+
 * 你不可不知的数据结构
 
 <img src="img/1.png" />
@@ -294,6 +295,7 @@ System.out.println(set);
 ```
 - - -
 ### <div id="mark-4">新日期时间的API</div>
+
     1、旧版日期操作的缺陷
     2、Java8新版的日期操作
     3、新版日期包概况
@@ -390,6 +392,12 @@ UTC + (＋0800) = 本地（北京）时间 (1)
 
 ### <div id="mark-6">Lambda 表达式(Lambda Expressions)</div>
 
+<a href="#mark-6-1">1、Lambda 表达式</a>  
+<a href="#mark-6-2">2、函数式接口</a>  
+<a href="#mark-6-3">3、方法引用、构造器引用、数组引用</a>  
+
+#### <div id="mark-6-1">Lambda 表达式</div>
+
     1、从匿名类到 Lambda 的转换举例 1
     2、从匿名类到 Lambda 的转换举例 2
     3、Lambda 表达式语法
@@ -472,7 +480,16 @@ Comparator<Integer> com = (x, y) -> Integer.compare(x, y);
 
 - - -
 
-### <div id="mark-7">函数式接口</div>
+#### <div id="mark-6-2">函数式接口</div>
+
+    1、什么是函数式(Functional)接口
+    2、如何理解函数式接口
+    3、函数式接口举例
+    4、自定义函数式接口
+    5、作为参数传递 Lambda 表达式
+    6、Java 内置四大核心函数式接口
+    7、其他接口
+
 * 什么是函数式(Functional)接口
 > 只包含一个抽象方法的接口，称为函数式接口。
 
@@ -553,3 +570,92 @@ public class Demo {
 ```
     作为参数传递 Lambda 表达式：为了将 Lambda 表达式作为参数传递，接收Lambda 表达式的参数类型必须是与该 Lambda 表达式兼容的函数式接口的类型。
 
+* Java 内置四大核心函数式接口
+<img src="img/12.png" />
+
+* 其他接口
+<img src="img/13.png" />
+
+- - -
+
+#### <div id="mark-6-3">方法引用、构造器引用、数组引用</div>
+
+    1、方法引用
+    2、构造器引用
+    3、数组引用
+
+    注意：当函数式接口方法的第一个参数是需要引用方法的调用者，并且第二个参数是需要引用方法的参数(或无参数)时：ClassName::methodName
+
+
+* 方法引用
+
+> 当要传递给Lambda体的操作，已经有实现的方法了，可以使用方法引用。
+
+> 方法引用就是Lambda表达式，就是函数式接口的一个实例，通过方法的名字来指向一个方法，可以认为是Lambda表达式的一个语法糖。
+
+> 要求：实现抽象方法的参数列表和返回值类型，必须与方法引用的方法的参数列表和返回值类型保持一致。
+
+> 方法引用：使用操作符 “::” 将类(或对象) 与 方法名分隔开来。
+
+> 如下三种主要使用情况
+
+    对象::实例方法名
+    类::静态方法名
+    类::实例方法名
+
+> 示例 1
+```
+Consumer<String> con = x -> System.out.println(x);
+// 等同于
+Consumer<String> con = System.out::println;
+
+con.accept("abc"); // abc
+```
+> 示例 2
+```
+Comparator<Integer> com = (x, y) -> Integer.compare(x, y);
+// 等同于
+Comparator<Integer> com = Integer::compare;
+
+System.out.println(com.compare(2,6)); // -1
+```
+> 示例 3
+```
+BiPredicate<String, String> biPredicate = (x, y) -> x.equals(y);
+// 等同于
+BiPredicate<String, String> biPredicate = String::equals;
+
+System.out.println(biPredicate.test("123", "abc")); // false
+```
+
+* 构造器引用
+
+    格式：   ClassName::new  
+    与函数式接口相结合，自动与函数式接口中方法兼容。
+    可以把构造器引用赋值给定义的方法，要求构造器参数列表要与接口中抽象方法的参数列表一致！且方法的返回值即为构造器对应类的对象。
+
+> 示例 1
+```
+Function<Long, Date> fun = n -> new Date(n);
+// 等同于
+Function<Long, Date> fun = Date::new;
+
+Date apply = fun.apply(1639472190065L);
+System.out.println(apply); // Tue Dec 14 16:56:30 CST 2021
+```
+
+* 数组引用
+
+    格式： type[] :: new
+
+> 示例 1
+```
+Function<Integer, Integer[]> fun = n -> new Integer[n];
+// 等同于
+Function<Integer, Integer[]> fun = Integer[]::new;
+
+Integer[] apply = fun.apply(10);
+System.out.println(apply.length); // 10
+```
+
+- - -
