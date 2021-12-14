@@ -662,6 +662,14 @@ System.out.println(apply.length); // 10
 
 ### <div id="mark-7">强大的Stream API</div>
 
+    1、为什么要使用Stream API
+    2、什么是 Stream
+    3、Stream 特征
+    4、Stream 的操作三个步骤
+    5、创建 Stream 方式
+    6、Stream 的中间操作
+    7、Stream 的终止操作
+
     Java8中有两大最为重要的改变。第一个是 Lambda 表达式；另外一个则是 Stream API。
 
     Stream API ( java.util.stream) 把真正的函数式编程风格引入到Java中。这是目前为止对Java类库最好的补充，因为Stream API可以极大提供Java程序员的生产力，让程序员写出高效率、干净、简洁的代码。
