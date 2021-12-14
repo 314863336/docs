@@ -15,7 +15,7 @@ Java 8 (又称为 jdk 1.8) 是 Java 语言开发的一个主要版本，也是LT
 4、<a href="#mark-4">新日期时间的API</a>  
 5、<a href="#mark-5">Optional类的使用</a>  
 6、<a href="#mark-6">Lambda 表达式(Lambda Expressions)</a>   
-7、<a href="#mark-7">Stream API</a>  
+7、<a href="#mark-7">强大的Stream API</a>  
 - - -
 ## 详细
 ### <div id="mark-1">接口的新特性</div>
@@ -659,3 +659,114 @@ System.out.println(apply.length); // 10
 ```
 
 - - -
+
+### <div id="mark-7">强大的Stream API</div>
+
+    Java8中有两大最为重要的改变。第一个是 Lambda 表达式；另外一个则是 Stream API。
+
+    Stream API ( java.util.stream) 把真正的函数式编程风格引入到Java中。这是目前为止对Java类库最好的补充，因为Stream API可以极大提供Java程序员的生产力，让程序员写出高效率、干净、简洁的代码。
+
+    Stream 是 Java8 中处理集合的关键抽象概念，它可以指定你希望对集合进行的操作，可以执行非常复杂的查找、过滤和映射数据等操作。
+
+    使用Stream API 对集合数据进行操作，就类似于使用 SQL 执行的数据库查询。
+
+    也可以使用 Stream API 来并行执行操作。
+
+    简言之，Stream API 提供了一种高效且易于使用的处理数据的方式。
+
+
+* 为什么要使用Stream API
+> 实际开发中，项目中多数数据源都来自于Mysql，Oracle等。但现在数据源可以更多了，有MongDB，Radis等，而这些NoSQL的数据就需要java层面去处理。
+
+* 什么是 Stream
+> 是数据渠道，用于操作数据源（集合、数组等）所生成的元素序列。“***集合讲的是数据，Stream讲的是计算！***”
+
+* Stream 特征
+> Stream 自己不会存储元素。
+
+> Stream 不会改变源对象。相反，他们会返回一个持有结果的新Stream。
+
+> Stream 操作是延迟执行的。这意味着他们会等到需要结果的时候才执行。
+
+* Stream 的操作三个步骤
+
+<img src="img/14.png" />
+
+> 1- 创建 Stream
+>> 一个数据源（如：集合、数组），获取一个流
+
+> 2- 中间操作
+>> 一个中间操作链，对数据源的数据进行处理
+
+> 3- 终止操作(终端操作)
+>> 一旦执行终止操作，就执行中间操作链，并产生结果。之后，不会再被使用
+
+* 创建 Stream 方式
+
+> 创建 Stream方式一：通过集合
+
+    Java8 中的 Collection 接口被扩展，提供了两个获取流的方法：   
+    1、default Stream<E> stream() : 返回一个顺序流；  
+    2、default Stream<E> parallelStream() : 返回一个并行流；  
+
+> 创建 Stream方式二：通过数组
+
+    Java8 中的 Arrays 的静态方法 stream() 可以获取数组流：  
+    `static <T> Stream<T> stream(T[] array)`: 返回一个流。
+
+    重载形式，能够处理对应基本类型的数组：  
+    public static IntStream stream(int[] array)  
+    public static LongStream stream(long[] array)  
+    public static DoubleStream stream(double[] array)  
+
+> 创建 Stream方式三：通过Stream的of()
+
+    可以调用Stream类静态方法 of(), 通过显示值创建一个流。它可以接收任意数量的参数：  
+    public static<T> Stream<T> of(T... values) : 返回一个流。
+
+> 创建 Stream方式四：创建无限流
+
+    可以使用静态方法 Stream.iterate() 和 Stream.generate(), 创建无限流。  
+    迭代：  
+    public static<T> Stream<T> iterate(final T seed, final UnaryOperator<T> f)  
+    生成：  
+    public static<T> Stream<T> generate(Supplier<T> s)
+
+* Stream 的中间操作
+
+    多个**中间操作**可以连接起来形成一个流水线，除非**流水线**上触发终止操作，否则中间操作不会执行任何的处理！而在终止操作时一次性全部处理，称为“**惰性求值**”。
+
+> 1-筛选与切片
+
+<img src="img/15.png" />
+
+> 2-映 射
+
+<img src="img/16.png" />
+
+> 3-排序
+
+<img src="img/17.png" />
+
+* Stream 的终止操作
+
+    1、终端操作会从流的流水线生成结果。其结果可以是任何不是流的值，例如：List、Integer，甚至是 void。  
+    2、流进行了终止操作后，不能再次使用。
+
+> 1-匹配与查找
+
+<img src="img/18.png" />
+<img src="img/19.png" />
+
+> 2-归约
+
+<img src="img/20.png" />
+
+> 3-收集
+
+<img src="img/21.png" />
+Collector 接口中方法的实现决定了如何对流执行收集的操作(如收集到 List、Set、Map)。  
+另外， Collectors 实用类提供了很多静态方法，可以方便地创建常见收集器实例，具体方法与实例如下表：  
+<img src="img/22.png" />
+<img src="img/23.png" />
+
