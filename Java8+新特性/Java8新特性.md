@@ -15,7 +15,8 @@ Java 8 (又称为 jdk 1.8) 是 Java 语言开发的一个主要版本，也是LT
 4、<a href="#mark-4">新日期时间的API</a>  
 5、<a href="#mark-5">Optional类的使用</a>  
 6、<a href="#mark-6">Lambda 表达式(Lambda Expressions)</a>  
-7、<a href="#mark-7">Stream API</a>  
+7、<a href="#mark-7">函数式接口</a>  
+8、<a href="#mark-8">Stream API</a> 
 - - -
 ## 详细
 ### <div id="mark-1">接口的新特性</div>
@@ -384,5 +385,93 @@ UTC + (＋0800) = 本地（北京）时间 (1)
     orElseGet(Supplier s) :如果调用对象包含值，返回该值，否则返回 s 获取的值  
     map(Function f): 如果有值对其处理，并返回处理后的Optional，否则返回 Optional.empty()  
     flatMap(Function mapper):与 map 类似，要求返回值必须是Optional  
+
+- - -
+
+### <div id="mark-6">Lambda 表达式(Lambda Expressions)</div>
+
+    1、从匿名类到 Lambda 的转换举例 1
+    2、从匿名类到 Lambda 的转换举例 2
+    3、Lambda 表达式语法
+    4、类型推断
+
+    Lambda 是一个匿名函数，我们可以把 Lambda 表达式理解为是一段可以传递的代码（将代码像数据一样进行传递）。使用它可以写出更简洁、更灵活的代码。作为一种更紧凑的代码风格，使Java的语言表达能力得到了提升。
+
+* 从匿名类到 Lambda 的转换举例 1
+```
+    //匿名内部类 表达方式
+    Runnable r1 = new Runnable() {
+        @Override
+        public void run() {
+            System.out.println("Hello World !");
+        }
+    };
+    //Lambda 表达方式
+    Runnable r2 = () -> System.out.println("Hello World !");
+
+```
+* 从匿名类到 Lambda 的转换举例 2
+```
+    //原来使用匿名内部类作为参数传递
+    TreeSet<String> ts1 = new TreeSet<>(new Comparator<String>() {
+        @Override
+        public int compare(String o1, String o2) {
+            return Integer.compare(o1.length(), o2.length());
+        }
+    });
+    //Lambda表达式作为参数传递
+    TreeSet<String> ts2 = new TreeSet<>((o1, o2) -> {
+        return Integer.compare(o1.length(), o2.length());
+    });
+
+```
+* Lambda 表达式语法  
+    Lambda 表达式：在Java 8 语言中引入的一种新的语法元素和操作符。这个操作符为 “->” ， 该操作符被称为 Lambda 操作符或箭头操作符。它将 Lambda 分为两个部分：
+
+    1、左侧：指定了 Lambda 表达式需要的参数列表  
+    2、右侧：指定了 Lambda 体，是抽象方法的实现逻辑，也即 Lambda 表达式要执行的功能。
+
+> 语法格式一：无参，无返回值
+```
+Runnable r1 = () -> {
+    System.out.println("Hello Lambda!");
+};
+```
+> 语法格式二：Lambda 需要一个参数，但是没有返回值。
+```
+Consumer<String> con = (String str) -> {
+    System.out.println(str);
+};
+```
+> 语法格式三：数据类型可以省略，因为可由编译器推断得出，称为“类型推断”
+```
+Consumer<String> con = (str) -> {
+    System.out.println(str);
+};
+```
+> 语法格式四：Lambda 若只需要一个参数时，参数的小括号可以省略
+```
+Consumer<String> con = str -> {
+    System.out.println(str);
+};
+```
+> 语法格式五：Lambda 需要两个或以上的参数，多条执行语句，并且可以有返回值
+```
+Comparator<Integer> com = (x, y) -> {
+    System.out.println("实现函数式接口方法！");
+    return Integer.compare(x, y);
+};
+```
+> 语法格式六：当 Lambda 体只有一条语句时，return 与大括号若有，都可以省略
+```
+Comparator<Integer> com = (x, y) -> Integer.compare(x, y);
+```
+* 类型推断  
+上述 Lambda 表达式中的参数类型都是由编译器推断得出的。Lambda 表达式中无需指定类型，程序依然可以编译，这是因为 javac 根据程序的上下文，在后台推断出了参数的类型。Lambda 表达式的类型依赖于上下文环境，是由编译器推断出来的。这就是所谓的“类型推断”。  
+<img src="img/10.png" />
+
+- - -
+
+### <div id="mark-7">函数式接口</div>
 
 
