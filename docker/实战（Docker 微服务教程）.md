@@ -136,3 +136,62 @@ tar -xvf wordpress-4.9.4-zh_CN.tar.gz
 
 > 至此，自建 WordPress 容器的演示完毕，可以把正在运行的两个容器关闭了（容器文件会自动删除）。
 * docker container stop wordpress wordpressdb
+
+### 方法 C：Docker Compose 工具
+    上面的方法 B 已经挺简单了，但是必须自己分别启动两个容器，启动的时候，还要在命令行提供容器之间的连接信息。因此，Docker 提供了一种更简单的方法，来管理多个容器的联动。
+
+> Docker Compose 简介
+* Compose 是 Docker 公司推出的一个工具软件，可以管理多个 Docker 容器组成一个应用。你需要定义一个 YAML 格式的配置文件docker-compose.yml，写好多个容器之间的调用关系。然后，只要一个命令，就能同时启动/关闭这些容器。
+
+    #启动所有服务  
+    docker-compose up  
+    #关闭所有服务  
+    docker-compose stop  
+
+> Docker Compose 的安装
+* Mac 和 Windows 在安装 docker 的时候，会一起安装 docker compose。Linux 系统下的安装参考<a href="https://docs.docker.com/compose/install/#install-compose">官方文档</a>
+
+> 安装完成后，运行下面的命令。
+* docker-compose --version
+
+> WordPress 示例
+>> 在docker-demo目录下，新建docker-compose.yml文件，写入下面的内容。
+```
+mysql:
+    image: mysql:5.7
+    environment:
+     - MYSQL_ROOT_PASSWORD=123456
+     - MYSQL_DATABASE=wordpress
+web:
+    image: wordpress
+    links:
+     - mysql
+    environment:
+     - WORDPRESS_DB_USER=root
+     - WORDPRESS_DB_PASSWORD=123456
+    ports:
+     - "9000:80"
+    working_dir: /var/www/html
+    volumes:
+     - wordpress:/var/www/html
+
+```
+上面代码中，两个顶层标签表示有两个容器mysql和web。每个容器的具体设置，前面都已经讲解过了，还是挺容易理解的。
+
+>> 启动两个容器，执行下面一条命令即可。
+* docker-compose up
+
+    注意：起了两个容器后，访问对应 IP 提示“Error establishing a database connection”
+
+    原因是 docker 官方 WordPress 镜像默认的数据库用户名既然是“example username”
+
+    起 WordPress 容器时，增加一个环境变量`--env WORDPRESS_DB_USER=root`即可。
+
+>> 浏览器访问 http://127.0.0.1:9000，应该就能看到 WordPress 的安装界面。
+
+>> 现在关闭两个容器，执行下面一条命令即可。
+* docker-compose stop
+
+    关闭以后，这两个容器文件还是存在的，写在里面的数据不会丢失。下次启动的时候，还可以复用。下面的命令可以把这两个容器文件删除（容器必须已经停止运行）。
+
+    docker-compose rm
