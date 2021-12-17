@@ -137,6 +137,43 @@ tar -xvf wordpress-4.9.4-zh_CN.tar.gz
 > 至此，自建 WordPress 容器的演示完毕，可以把正在运行的两个容器关闭了（容器文件会自动删除）。
 * docker container stop wordpress wordpressdb
 
+### 方法 B：Wordpress 官方镜像
+    上一部分的自建 WordPress 容器，还是挺麻烦的。其实不用这么麻烦，Docker 已经提供了官方 WordPress image，直接用那个就可以了。有了上一部分的基础，下面的操作就很容易理解了。
+
+> 基本用法
+>> 首先，新建并启动 MySQL 容器。
+* docker container run -d --rm --name wordpressdb --env MYSQL_ROOT_PASSWORD=123456 --env MYSQL_DATABASE=wordpress mysql:5.7
+>> 然后，基于官方的 WordPress image，新建并启动 WordPress 容器。
+* docker container run -d --rm -p 9000:80  --name wordpress --env WORDPRESS_DB_USER=root --env WORDPRESS_DB_PASSWORD=123456 --link wordpressdb:mysql wordpress
+
+    上面命令中，各个参数的含义前面都解释过了，其中环境变量WORDPRESS_DB_PASSWORD是 MySQL 容器的根密码。
+
+    注意：起了两个容器后，访问对应 IP 提示“Error establishing a database connection”
+
+    原因是 docker 官方 WordPress 镜像默认的数据库用户名既然是“example username”。起 WordPress 容器时，增加一个环境变量`--env WORDPRESS_DB_USER=root`即可。
+
+>> 这时，浏览器访问http://127.0.0.1:9000/就可以看到页面了
+
+>> 上面命令指定wordpress容器在后台运行，导致前台看不见输出，使用下面的命令查出wordpress容器的 IP 等信息。
+* docker container inspect wordpress
+
+> WordPress 容器的定制（选修）
+>> 到了上一步，官方 WordPress 容器的安装就已经成功了。但是，这种方法有两个很不方便的地方。
+* 每次新建容器，返回的 IP 地址不能保证相同，导致要更换 IP 地址访问 WordPress。
+* WordPress 安装在容器里面，本地无法修改文件。
+>> 解决这两个问题很容易，只要新建容器的时候，加两个命令行参数就可以了。
+
+>> 先把刚才启动的 WordPress 容器终止（容器文件会自动删除）。
+* docker container stop wordpress
+>> 然后，使用下面的命令新建并启动 WordPress 容器。
+* docker container run -d --rm -p 127.0.0.2:9000:80  --name wordpress --env WORDPRESS_DB_USER=root --env WORDPRESS_DB_PASSWORD=123456 --link wordpressdb:mysql --volume "$PWD/wordpress":/var/www/html wordpress
+>> 上面的命令跟前面相比，命令行参数只多出了两个。
+* -p 127.0.0.2:8080:80：将容器的 80 端口映射到127.0.0.2的8080端口。
+* --volume "$PWD/wordpress":/var/www/html：将容器的/var/www/html目录映射到当前目录的wordpress子目录。
+>> 浏览器访问127.0.0.2:8080就能看到 WordPress 的安装提示了。而且，你在wordpress子目录下的每次修改，都会反映到容器里面。（PLF，我在Mac上是不成功的，127.0.0.2与Mac不通，可能跟Mac系统安全限制有关系吧）
+>> 最后，终止这两个容器（容器文件会自动删除）。
+* docker container stop wordpress wordpressdb
+
 ### 方法 C：Docker Compose 工具
     上面的方法 B 已经挺简单了，但是必须自己分别启动两个容器，启动的时候，还要在命令行提供容器之间的连接信息。因此，Docker 提供了一种更简单的方法，来管理多个容器的联动。
 
@@ -180,13 +217,6 @@ web:
 
 >> 启动两个容器，执行下面一条命令即可。
 * docker-compose up
-
-    注意：起了两个容器后，访问对应 IP 提示“Error establishing a database connection”
-
-    原因是 docker 官方 WordPress 镜像默认的数据库用户名既然是“example username”
-
-    起 WordPress 容器时，增加一个环境变量`--env WORDPRESS_DB_USER=root`即可。
-
 >> 浏览器访问 http://127.0.0.1:9000，应该就能看到 WordPress 的安装界面。
 
 >> 现在关闭两个容器，执行下面一条命令即可。
