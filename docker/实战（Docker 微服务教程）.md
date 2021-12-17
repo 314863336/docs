@@ -31,10 +31,10 @@ Docker 是一个容器工具，提供虚拟环境。很多人认为，它改变�
 - - -
 
 ## 详情
-### 准备工作：image 仓库的镜像网址
+### <div id="mark-1">准备工作：image 仓库的镜像网址</a>
 本教程需要从仓库下载 image 文件，但是国内访问 Docker 的官方仓库很慢，还经常断线，所以要把仓库网址改成国内的镜像站。这里推荐使用官方镜像 registry.docker-cn.com。配置方式参考同目录下的《修改image仓库的镜像网址.md》
 
-### 方法 A：自建 WordPress 容器
+### <div id="mark-2">方法 A：自建 WordPress 容器</a>
 > 首先，新建一个工作目录，并进入该目录。
 * mkdir docker-demo && cd docker-demo
 > 然后，执行下面的命令。
@@ -137,7 +137,7 @@ tar -xvf wordpress-4.9.4-zh_CN.tar.gz
 > 至此，自建 WordPress 容器的演示完毕，可以把正在运行的两个容器关闭了（容器文件会自动删除）。
 * docker container stop wordpress wordpressdb
 
-### 方法 B：Wordpress 官方镜像
+### <div id="mark-3">方法 B：Wordpress 官方镜像</a>
     上一部分的自建 WordPress 容器，还是挺麻烦的。其实不用这么麻烦，Docker 已经提供了官方 WordPress image，直接用那个就可以了。有了上一部分的基础，下面的操作就很容易理解了。
 
 > 基本用法
@@ -170,11 +170,11 @@ tar -xvf wordpress-4.9.4-zh_CN.tar.gz
 >> 上面的命令跟前面相比，命令行参数只多出了两个。
 * -p 127.0.0.2:8080:80：将容器的 80 端口映射到127.0.0.2的8080端口。
 * --volume "$PWD/wordpress":/var/www/html：将容器的/var/www/html目录映射到当前目录的wordpress子目录。
->> 浏览器访问127.0.0.2:8080就能看到 WordPress 的安装提示了。而且，你在wordpress子目录下的每次修改，都会反映到容器里面。（PLF，我在Mac上是不成功的，127.0.0.2与Mac不通，可能跟Mac系统安全限制有关系吧）
+>> 浏览器访问127.0.0.2:8080就能看到 WordPress 的安装提示了。而且，你在wordpress子目录下的每次修改，都会反映到容器里面。（**PLF，我在Mac上是不成功的，127.0.0.2与Mac不通，可能跟Mac系统安全限制有关系吧**）
 >> 最后，终止这两个容器（容器文件会自动删除）。
 * docker container stop wordpress wordpressdb
 
-### 方法 C：Docker Compose 工具
+### <div id="mark-4">方法 C：Docker Compose 工具</a>
     上面的方法 B 已经挺简单了，但是必须自己分别启动两个容器，启动的时候，还要在命令行提供容器之间的连接信息。因此，Docker 提供了一种更简单的方法，来管理多个容器的联动。
 
 > Docker Compose 简介
