@@ -71,3 +71,68 @@ tar -xvf wordpress-4.9.4-zh_CN.tar.gz
 >> 这时浏览器访问http://127.0.0.1:9000/wordpress/，就能看到 WordPress 的安装提示了
 
 <img src="img/10.png" />
+
+> 官方的 MySQL 容器
+* WordPress 必须有数据库才能安装，所以必须新建 MySQL 容器。
+>> 打开一个新的命令行窗口，执行下面的命令。
+* docker container run -d --rm --name wordpressdb --env MYSQL_ROOT_PASSWORD=123456 --env MYSQL_DATABASE=wordpress mysql:5.7
+
+    运行上面的命令以后，正常情况下，命令行会显示一行字符串，这是容器的 ID，表示已经新建成功了。
+
+    上面的命令会基于 MySQL 的 image 文件（5.7版本）新建一个容器。该命令的五个命令行参数的含义如下：  
+
+    -d：容器启动后，在后台运行。  
+    --rm：容器终止运行后，自动删除容器文件。
+    --name wordpressdb：容器的名字叫做wordpressdb。  
+    --env MYSQL_ROOT_PASSWORD=123456：向容器进程传入一个环境变量MYSQL_ROOT_PASSWORD，该变量会被用作 MySQL 的根密码。  
+    --env MYSQL_DATABASE=wordpress：向容器进程传入一个环境变量MYSQL_DATABASE，容器里面的 MySQL 会根据该变量创建一个同名数据库（本例是WordPress）。
+
+>> 这时，使用下面的命令查看正在运行的容器，你应该看到wordpress和wordpressdb两个容器正在运行
+* docker container ls
+>> 其中，wordpressdb是后台运行的，前台看不见它的输出，必须使用下面的命令查看。
+* docker container logs wordpressdb
+
+> 定制 PHP 容器
+* 现在 WordPress 容器和 MySQL 容器都已经有了。接下来，要把 WordPress 容器连接到 MySQL 容器了。但是，PHP 的官方 image 不带有mysql扩展，必须自己新建 image 文件。
+>> 首先，停掉 WordPress 容器。
+* docker container stop wordpress
+>> 停掉以后，由于--rm参数的作用，该容器文件会被自动删除。
+
+>> 然后，在docker-demo目录里面，新建一个Dockerfile文件，写入下面的内容。
+
+    FROM php:5.6-apache
+    RUN docker-php-ext-install mysqli
+    CMD apache2-foreground
+
+    上面代码的意思，就是在原来 PHP 的 image 基础上，安装mysqli的扩展。然后，启动 Apache。
+
+>> 基于这个 Dockerfile 文件，新建一个名为phpwithmysql的 image 文件。
+* docker build -t phpwithmysql .
+
+> Wordpress 容器连接 MySQL
+>> 现在基于 phpwithmysql image，重新新建一个 WordPress 容器。
+* docker container run --rm -p 9000:80  --name wordpress --volume "$PWD/":/var/www/html --link wordpressdb:mysql phpwithmysql
+
+    跟上一次相比，上面的命令多了一个参数--link wordpressdb:mysql，表示 WordPress 容器要连到wordpressdb容器，冒号表示该容器的别名是mysql。
+
+> 这时还要改一下wordpress目录的权限，让容器可以将配置信息写入这个目录（容器内部写入的/var/www/html目录，会映射到这个目录）。
+* chmod -R 777 wordpress
+
+> 接着，回到浏览器的http://127.0.0.1:9000/wordpress页面，点击"现在就开始！"按钮，开始安装。
+
+> WordPress 提示要输入数据库参数。输入的参数如下。
+
+<img src="img/11.png">
+
+    数据库名：wordpress
+    用户名：root
+    密码：123456
+    数据库主机：mysql
+    表前缀：wp_（不变
+
+> 点击"下一步"按钮，如果 Wordpress 连接数据库成功，就会出现下面的页面，这就表示可以安装了。
+
+<img src="img/12.png" />
+
+> 至此，自建 WordPress 容器的演示完毕，可以把正在运行的两个容器关闭了（容器文件会自动删除）。
+* docker container stop wordpress wordpressdb
